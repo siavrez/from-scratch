@@ -28,11 +28,14 @@ def knn_predict_v2(train: np.array, target: np.array, test: np.array, n_neighbor
 
     return [mode(target[np.argsort(np.array(list(map(partial(distance_metric, p2=item), train))))[:n_neighbors]]).mode[0] for item in test]
 
-
-iris = load_iris()
-X_train, X_test, y_train, y_test = tta(
-    iris.data, iris.target, test_size=0.3, random_state=0, shuffle=True)
-y_pred = knn_predict(X_train, y_train, X_test, 7)
+def test_classifier(prdictor:Callable) -> np.ndarray:
+    iris = load_iris()
+    X_train, X_test, y_train, y_test = tta(
+        iris.data, iris.target, test_size=0.3, random_state=0, shuffle=True)
+    y_pred = knn_predict(X_train, y_train, X_test, 7)
+    return y_test, y_pred
 
 # Checking the accuracy
-print(accuracy_score(y_test, y_pred))
+if __name__=='__main__':
+    y_test, y_pred = test_classifier(knn_predict)
+    print(accuracy_score(y_test, y_pred))
